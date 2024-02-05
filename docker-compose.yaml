@@ -1,0 +1,21 @@
+version: '3'
+services:
+  manager:
+    build: ./ManagerProject/
+    environment:
+      - WORKERS_NUM=1
+    ports:
+      - "8080:8080"
+    networks:
+      - network1
+
+  worker:
+    build: ./WorkerProject/
+    ports:
+      - "8081:8080"
+    networks:
+      - network1
+
+networks:
+  network1:
+    driver: bridge
