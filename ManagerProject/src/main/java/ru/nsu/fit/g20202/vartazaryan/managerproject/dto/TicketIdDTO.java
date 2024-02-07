@@ -3,11 +3,11 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.dto;
 import lombok.Data;
 
 @Data
-public class ResponseDTO
+public class TicketIdDTO
 {
     private String requestId;
 
-    public ResponseDTO(String id)
+    public TicketIdDTO(String id)
     {
         this.requestId = id;
     }

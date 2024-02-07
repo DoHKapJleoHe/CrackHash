@@ -6,15 +6,16 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class TicketStorage
 {
-    private Map<String, Ticket> ticketStorage;
+    private ConcurrentHashMap<String, Ticket> ticketStorage;
 
     public TicketStorage()
     {
-        ticketStorage = new HashMap<>();
+        ticketStorage = new ConcurrentHashMap<>();
     }
 
     public String addNewTicket(CrackDTO dto)
@@ -27,5 +28,15 @@ public class TicketStorage
         ticketStorage.put(id, t);
 
         return id;
+    }
+
+    public Ticket getTicket(String id)
+    {
+        return ticketStorage.get(id);
+    }
+
+    public void deleteTicket(String id)
+    {
+        ticketStorage.remove(id);
     }
 }

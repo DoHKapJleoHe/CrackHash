@@ -1,5 +1,6 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Objects;
@@ -9,12 +10,14 @@ import java.util.UUID;
 public class Ticket
 {
     private UUID ticketId;
+    private Status status;
     private String hash;
     private int maxLength;
 
     public Ticket(UUID ticketId, String hash, int maxLength)
     {
         this.ticketId = ticketId;
+        this.status = Status.IN_PROGRESS;
         this.hash = hash;
         this.maxLength = maxLength;
     }

@@ -9,7 +9,7 @@ services:
     networks:
       - network1
 
-  worker:
+  worker1:
     build: ./WorkerProject/
     ports:
       - "8081:8080"
