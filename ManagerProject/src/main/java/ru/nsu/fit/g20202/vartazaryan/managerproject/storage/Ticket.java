@@ -14,6 +14,8 @@ public class Ticket
     private String hash;
     private int maxLength;
 
+    private String result;
+
     public Ticket(UUID ticketId, String hash, int maxLength)
     {
         this.ticketId = ticketId;

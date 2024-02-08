@@ -1,6 +1,5 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +18,13 @@ import java.net.http.HttpResponse;
 public class WorkerServiceImpl implements WorkerService
 {
     private final TicketStorage ticketStorage;
-    private int workersNumber;
+    private int workersNumber = 1;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public WorkerServiceImpl(TicketStorage ticketStorage)
     {
-        this.workersNumber = Integer.parseInt(System.getenv("WORKERS_NUM"));
+        //this.workersNumber = Integer.parseInt(System.getenv("WORKERS_NUM"));
         this.ticketStorage = ticketStorage;
         this.objectMapper = new ObjectMapper();
     }
@@ -45,6 +44,7 @@ public class WorkerServiceImpl implements WorkerService
                     .start(1)
                     .finish(wordCount)
                     .maxLen(ticket.getMaxLength())
+                    .hash(ticket.getHash())
                     .build();
 
             int finalI = i;
@@ -54,7 +54,8 @@ public class WorkerServiceImpl implements WorkerService
 
     private void sendTaskToWorker(TaskDTO dto, int worker)
     {
-        String workerHost = "http://worker"+worker+":808"+worker+"/internal/api/manager/hash/crack/request";
+        String workerHost = "http://worker"+worker+":8080"+"/internal/api/worker/hash/crack/task";
+        System.out.println("Worker host: "+workerHost);
         URI uri = URI.create(workerHost);
 
         HttpClient workerClient = HttpClient.newHttpClient();
@@ -66,6 +67,7 @@ public class WorkerServiceImpl implements WorkerService
                     .build();
 
             HttpResponse<String> response = workerClient.send(solveTaskRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Request was sent to worker");
 
             // if not ok
             if (response.statusCode() != 200)

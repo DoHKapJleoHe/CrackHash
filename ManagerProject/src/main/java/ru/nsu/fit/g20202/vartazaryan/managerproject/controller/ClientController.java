@@ -27,12 +27,15 @@ public class ClientController
     @PostMapping("/crack")
     public ResponseEntity<TicketIdDTO> crackHash(@RequestBody CrackDTO crackDTO)
     {
+        System.out.println("New crack hash request!");
+
         var ticketIdDTO = clientService.processRequest(crackDTO);
-        var response = ResponseEntity.ok().body(ticketIdDTO);
+
+        System.out.println("Registered new ticket. ID = "+ticketIdDTO.getRequestId());
 
         workerService.handleTicket(ticketIdDTO.getRequestId());
 
-        return response;
+        return ResponseEntity.ok().body(ticketIdDTO);
     }
 
     @GetMapping("/status")

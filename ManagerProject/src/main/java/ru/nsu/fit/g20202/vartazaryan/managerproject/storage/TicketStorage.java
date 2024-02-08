@@ -3,8 +3,6 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,5 +36,15 @@ public class TicketStorage
     public void deleteTicket(String id)
     {
         ticketStorage.remove(id);
+    }
+    public void updateTicket(String id, String data)
+    {
+        var ticket = ticketStorage.get(id);
+        if (data != null)
+        {
+            ticket.setStatus(Status.DONE);
+            ticket.setResult(data);
+            System.out.println("Ticket "+ticket.getTicketId()+" was successfully updated!");
+        }
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TicketIdDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.ResultDTO;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.UpdateDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Status;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
@@ -35,8 +36,10 @@ public class ClientServiceImpl implements ClientService
         switch (ticket.getStatus())
         {
             case DONE -> {
+                var res = ticket.getResult();
                 ticketStorage.deleteTicket(id);
-                return new ResultDTO(Status.DONE, ticket.getHash());
+
+                return new ResultDTO(Status.DONE, res);
             }
             case IN_PROGRESS -> {
                 return new ResultDTO(Status.IN_PROGRESS, null);
@@ -47,5 +50,11 @@ public class ClientServiceImpl implements ClientService
         }
 
         return null;
+    }
+
+    @Override
+    public void updateTicket(UpdateDTO dto)
+    {
+        ticketStorage.updateTicket(dto.getTicketID(), dto.getResult());
     }
 }

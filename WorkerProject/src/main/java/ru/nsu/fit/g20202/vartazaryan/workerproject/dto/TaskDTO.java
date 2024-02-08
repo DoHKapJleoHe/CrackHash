@@ -1,10 +1,8 @@
-package ru.nsu.fit.g20202.vartazaryan.managerproject.dto;
+package ru.nsu.fit.g20202.vartazaryan.workerproject.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class TaskDTO
 {
     private String ticketID;
