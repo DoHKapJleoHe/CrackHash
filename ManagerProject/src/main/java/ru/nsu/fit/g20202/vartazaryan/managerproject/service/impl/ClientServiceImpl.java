@@ -6,6 +6,8 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TicketIdDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.ResultDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.UpdateDTO;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoHashException;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoMaxLengthException;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Status;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
@@ -24,6 +26,10 @@ public class ClientServiceImpl implements ClientService
 
     public TicketIdDTO processRequest(CrackDTO dto)
     {
+        if (dto.getHash() == null)
+            throw new NoHashException();
+        if (dto.getMaxLength() == 0)
+            throw new NoMaxLengthException();
         String taskId = ticketStorage.addNewTicket(dto);
         System.out.println("New ticket registered!");
 

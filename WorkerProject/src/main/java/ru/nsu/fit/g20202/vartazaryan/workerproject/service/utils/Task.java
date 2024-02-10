@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ public class Task implements Runnable
     private String hash;
     private List<String> alphabet;
 
-    private String res;
+    private List<String> res;
     private final ObjectMapper objectMapper;
 
     private int iterations = 0;
@@ -106,7 +105,7 @@ public class Task implements Runnable
 
             if (myHash.equals(hash))
             {
-                res = word.toString();
+                res.add(word.toString());
                 System.out.println("Word with expected hash was found! Word is: "+res);
             }
         } catch (NoSuchAlgorithmException e) {

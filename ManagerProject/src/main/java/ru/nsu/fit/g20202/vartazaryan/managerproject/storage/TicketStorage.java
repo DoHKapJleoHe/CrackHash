@@ -3,12 +3,17 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiFunction;
 
 @Component
 public class TicketStorage
 {
+    //TODO: любое изменение хранилище нужно выполнять в защищённом блоке
     private ConcurrentHashMap<String, Ticket> ticketStorage;
 
     public TicketStorage()
@@ -37,14 +42,26 @@ public class TicketStorage
     {
         ticketStorage.remove(id);
     }
-    public void updateTicket(String id, String data)
+
+    //TODO: отслеживать сколкьо воркеров вернуло ответ, чтобы всегда IN_PROGRESS не было
+    public void updateTicket(String id, List<String> data)
     {
-        var ticket = ticketStorage.get(id);
-        if (data != null)
-        {
-            ticket.setStatus(Status.DONE);
-            ticket.setResult(data);
-            System.out.println("Ticket "+ticket.getTicketId()+" was successfully updated!");
-        }
+        Ticket blankTicket = new Ticket(UUID.randomUUID(), "blank", 1);
+        ticketStorage.merge(id, blankTicket, ((ticket, ticket1) -> {
+            if (!data.isEmpty())
+            {
+                ticket.setStatus(Status.DONE);
+                ticket.setResult(data);
+
+                System.out.println("Ticket "+ticket.getTicketId()+" was successfully updated!");
+            }
+
+            return ticket;
+        }));
+    }
+
+    public int getStorageSize()
+    {
+        return ticketStorage.size();
     }
 }

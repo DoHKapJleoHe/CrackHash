@@ -2,24 +2,20 @@ version: '3'
 services:
   manager:
     build: ./ManagerProject/
-    environment:
-      - WORKERS_NUM=2
     ports:
       - "8080:8080"
     networks:
       - network1
+    env_file:
+      - .env
 
   worker1:
     build: ./WorkerProject/
-    ports:
-      - "8081:8080"
     networks:
       - network1
 
   worker2:
     build: ./WorkerProject/
-    ports:
-      - "8082:8080"
     networks:
       - network1
 

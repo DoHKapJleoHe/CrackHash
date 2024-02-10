@@ -3,6 +3,8 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,7 +16,7 @@ public class Ticket
     private String hash;
     private int maxLength;
 
-    private String result;
+    private List<String> result;
 
     public Ticket(UUID ticketId, String hash, int maxLength)
     {
@@ -22,6 +24,8 @@ public class Ticket
         this.status = Status.IN_PROGRESS;
         this.hash = hash;
         this.maxLength = maxLength;
+
+        result = new ArrayList<>();
     }
 
     @Override

@@ -1,0 +1,5 @@
+springdoc:
+  swagger-ui:
+    path: /swagger
+    enabled: ${DEVELOPMENT:false}
+
