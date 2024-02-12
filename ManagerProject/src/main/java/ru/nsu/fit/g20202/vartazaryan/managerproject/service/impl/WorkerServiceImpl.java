@@ -18,10 +18,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 @Service
 public class WorkerServiceImpl implements WorkerService
 {
+    private static final int SYMBOLS_IN_ALPHABET = 36;
     private final TicketStorage ticketStorage;
     @Setter
     @Getter
@@ -42,41 +44,39 @@ public class WorkerServiceImpl implements WorkerService
 
     public void handleTicket(String ticketID)
     {
-        threadPool.submit(() -> {
-            Ticket ticket = ticketStorage.getTicket(ticketID);
+        Ticket ticket = ticketStorage.getTicket(ticketID);
 
-            int wordCount = 0;
-            for (int i = 1; i <= ticket.getMaxLength(); i++)
-                wordCount += (int) Math.pow(36, i);
+        int wordCount = (int)(SYMBOLS_IN_ALPHABET*(Math.pow(SYMBOLS_IN_ALPHABET, ticket.getMaxLength()) - 1)/(SYMBOLS_IN_ALPHABET - 1));
 
-            int wordsPerWorker = wordCount / workersNumber;
-            int remainingWords = wordCount % workersNumber;
+        int wordsPerWorker = wordCount / workersNumber;
+        int remainingWords = wordCount % workersNumber;
 
-            int curStart = 1;
-            for(int i = 1; i <= workersNumber; i++)
-            {
-                int curFinish;
-                if (i > 1 && i == workersNumber) {
-                    curFinish = curStart + wordsPerWorker - 1 + remainingWords;
-                } else {
-                    curFinish = curStart + wordsPerWorker - 1;
-                }
-
-                System.out.println("Worker"+i+": start= "+curStart+" finish= "+curFinish);
-
-                TaskDTO newTaskDTO = TaskDTO.builder()
-                        .ticketID(ticket.getTicketId().toString())
-                        .start(curStart)
-                        .finish(curFinish)
-                        .maxLen(ticket.getMaxLength())
-                        .hash(ticket.getHash())
-                        .build();
-
-                sendTaskToWorker(newTaskDTO, i);
-
-                curStart = curFinish + 1;
+        int curStart = 1;
+        for(int i = 1; i <= workersNumber; i++)
+        {
+            int curFinish;
+            if (i > 1 && i == workersNumber) {
+                curFinish = curStart + wordsPerWorker - 1 + remainingWords;
+            } else {
+                curFinish = curStart + wordsPerWorker - 1;
             }
-        });
+
+            System.out.println("Worker"+i+": start= "+curStart+" finish= "+curFinish);
+
+            TaskDTO newTaskDTO = TaskDTO.builder()
+                    .ticketID(ticket.getTicketId().toString())
+                    .start(curStart)
+                    .finish(curFinish)
+                    .maxLen(ticket.getMaxLength())
+                    .hash(ticket.getHash())
+                    .build();
+
+            int finalI = i;
+            threadPool.submit(() -> {
+                sendTaskToWorker(newTaskDTO, finalI);
+            });
+            curStart = curFinish + 1;
+        }
     }
 
     private void sendTaskToWorker(TaskDTO dto, int worker)

@@ -83,7 +83,7 @@ public class TicketStorage implements Storage
                 ticket.setStatus(Status.DONE);
                 ticket.setResult(data);
 
-                System.out.println("Ticket "+ticket.getTicketId()+" was successfully updated!");
+                logger.info(String.format("Ticket %s was successfully updated!", ticket.getTicketId()));
             }
 
             return ticket;
