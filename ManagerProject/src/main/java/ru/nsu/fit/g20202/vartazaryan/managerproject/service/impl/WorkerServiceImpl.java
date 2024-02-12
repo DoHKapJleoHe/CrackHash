@@ -3,8 +3,9 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.WorkerService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TaskDTO;
@@ -18,19 +19,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.IntStream;
 
 @Service
 public class WorkerServiceImpl implements WorkerService
 {
     private static final int SYMBOLS_IN_ALPHABET = 36;
-    private final TicketStorage ticketStorage;
     @Setter
     @Getter
     private int workersNumber;
+    private final TicketStorage ticketStorage;
     private final ObjectMapper objectMapper;
-
     private final ExecutorService threadPool;
+    private static final Logger logger = LoggerFactory.getLogger(WorkerServiceImpl.class);
 
     @Autowired
     public WorkerServiceImpl(TicketStorage ticketStorage)
@@ -61,7 +61,7 @@ public class WorkerServiceImpl implements WorkerService
                 curFinish = curStart + wordsPerWorker - 1;
             }
 
-            System.out.println("Worker"+i+": start= "+curStart+" finish= "+curFinish);
+            logger.info(String.format("Worker %d: start = %d, finish = %d", i, curStart, curFinish));
 
             TaskDTO newTaskDTO = TaskDTO.builder()
                     .ticketID(ticket.getTicketId().toString())
@@ -82,7 +82,8 @@ public class WorkerServiceImpl implements WorkerService
     private void sendTaskToWorker(TaskDTO dto, int worker)
     {
         String workerHost = "http://worker"+worker+":8080"+"/internal/api/worker/hash/crack/task";
-        System.out.println("Worker host: "+workerHost);
+        logger.info("Worker host: %s"+workerHost);
+
         URI uri = URI.create(workerHost);
 
         HttpClient workerClient = HttpClient.newHttpClient();
@@ -94,13 +95,10 @@ public class WorkerServiceImpl implements WorkerService
                     .build();
 
             HttpResponse<String> response = workerClient.send(solveTaskRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Request was sent to worker");
+            logger.info("Request was sent to worker");
 
-            // if not ok
             if (response.statusCode() != 200)
-            {
-                System.out.println("Something went wrong on worker side. Status code: "+response.statusCode());
-            }
+                logger.error(String.format("Something went wrong on worker side. Status code: %d", response.statusCode()));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
