@@ -1,6 +1,8 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,9 @@ import java.util.concurrent.Executors;
 public class WorkerServiceImpl implements WorkerService
 {
     private final TicketStorage ticketStorage;
-
-    private int workersNumber = 2;
+    @Setter
+    @Getter
+    private int workersNumber;
     private final ObjectMapper objectMapper;
 
     private final ExecutorService threadPool;
@@ -31,7 +34,7 @@ public class WorkerServiceImpl implements WorkerService
     public WorkerServiceImpl(TicketStorage ticketStorage)
     {
         String workersNum = System.getenv("WORKERS_NUM");
-        this.workersNumber = workersNum != null ? Integer.parseInt(workersNum) : 1;
+        this.workersNumber = workersNum != null ? Integer.parseInt(workersNum) : 2;
         this.ticketStorage = ticketStorage;
         this.objectMapper = new ObjectMapper();
         threadPool = Executors.newFixedThreadPool(workersNumber);

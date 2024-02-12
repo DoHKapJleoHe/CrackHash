@@ -1,7 +1,8 @@
 package ru.nsu.fit.g20202.vartazaryan.workerproject.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import ru.nsu.fit.g20202.vartazaryan.workerproject.service.WorkerService;
 public class ManagerController
 {
     private final WorkerService workerService;
+    private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
 
     @Autowired
     public ManagerController(WorkerService workerService)
@@ -24,13 +26,16 @@ public class ManagerController
     @PostMapping
     public void handleNewTask(@RequestBody TaskDTO taskDTO)
     {
-        System.out.println("New task received!");
-        System.out.println("Task info:");
-        System.out.println("ID= "+taskDTO.getTicketID());
-        System.out.println("Start= "+taskDTO.getStart());
-        System.out.println("Finish= "+taskDTO.getFinish());
-        System.out.println("Hash to find= "+taskDTO.getHash());
-        System.out.println("Word maxLen= "+taskDTO.getMaxLen());
+        String info = String.format("""
+                New task received!
+                Task info:
+                ID= %s
+                Start= %d
+                Finish= %d
+                Hash= %s
+                Max length= %d
+                """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getFinish(), taskDTO.getHash(), taskDTO.getMaxLen());
+        logger.info(info);
 
         workerService.handleTask(taskDTO);
     }

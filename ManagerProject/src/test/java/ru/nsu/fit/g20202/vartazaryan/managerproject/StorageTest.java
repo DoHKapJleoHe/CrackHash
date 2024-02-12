@@ -1,5 +1,6 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,12 @@ public class StorageTest
 {
     @Autowired
     private TicketStorage ticketStorage;
+
+    @BeforeEach
+    public void setUp()
+    {
+        ticketStorage.deleteAllTickets();
+    }
 
     @Test
     public void addTicketTest()

@@ -3,6 +3,8 @@ package ru.nsu.fit.g20202.vartazaryan.workerproject.service.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paukov.combinatorics3.Generator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.nsu.fit.g20202.vartazaryan.workerproject.dto.ResponseDTO;
 import ru.nsu.fit.g20202.vartazaryan.workerproject.dto.TaskDTO;
 
@@ -14,6 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,10 +27,11 @@ public class Task implements Runnable
     private int finish;
     private int maxLen;
     private String hash;
-    private List<String> alphabet;
+    private List<String> alphabet = new ArrayList<>();
 
-    private List<String> res;
+    private List<String> res = new ArrayList<>();
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(Task.class);
 
     private int iterations = 0;
 
@@ -39,14 +43,12 @@ public class Task implements Runnable
         this.maxLen = dto.getMaxLen();
         this.hash = dto.getHash();
 
-        alphabet = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-                "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8","9");
-        objectMapper = new ObjectMapper();
+        for(char i = 'a'; i < 'z'; i++)
+            alphabet.add(String.valueOf(i));
+        for(char i = '0'; i < '9'; i++)
+            alphabet.add(String.valueOf(i));
 
-        System.out.println("Task info:");
-        System.out.println("Start = "+dto.getStart());
-        System.out.println("Finish = "+dto.getFinish());
-        System.out.println("MaxLen = "+dto.getMaxLen());
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class Task implements Runnable
                 .limit(finish)
                 .forEach(this::calcHash);
 
-        System.out.println("Execution finished. Total iterations = "+this.iterations+"Sending result...");
+        logger.info(String.format("Execution finished. Total iterations = %d. Sending result...", this.iterations));
 
         String managerHost = "http://manager:8080/internal/api/manager/hash/crack/request";
         URI uri = URI.create(managerHost);
@@ -75,12 +77,10 @@ public class Task implements Runnable
                     .build();
 
             HttpResponse<String> response = managerClient.send(taskResponse, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Result was sent!");
+            logger.info("Result was sent!");
 
             if (response.statusCode() != 200)
-            {
-                System.out.println("Something went wrong on manager side. Status code: "+response.statusCode());
-            }
+                logger.error(String.format("Something went wrong on manager side. Status code: %d", response.statusCode()));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -106,7 +106,7 @@ public class Task implements Runnable
             if (myHash.equals(hash))
             {
                 res.add(word.toString());
-                System.out.println("Word with expected hash was found! Word is: "+res);
+                logger.info(String.format("Word with expected hash was found! Word is: %s", res.toString()));
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

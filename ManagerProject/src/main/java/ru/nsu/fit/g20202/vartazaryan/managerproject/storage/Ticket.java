@@ -3,6 +3,7 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,7 @@ public class Ticket
     private String hash;
     private int maxLength;
 
+    private LocalDateTime creationTime;
     private List<String> result;
 
     public Ticket(UUID ticketId, String hash, int maxLength)
@@ -25,7 +27,8 @@ public class Ticket
         this.hash = hash;
         this.maxLength = maxLength;
 
-        result = new ArrayList<>();
+        this.creationTime = LocalDateTime.now();
+        this.result = new ArrayList<>();
     }
 
     @Override
