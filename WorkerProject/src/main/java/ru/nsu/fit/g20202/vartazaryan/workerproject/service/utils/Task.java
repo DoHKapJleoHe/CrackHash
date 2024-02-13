@@ -16,6 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +24,8 @@ import java.util.List;
 public class Task implements Runnable
 {
     private String ticketID;
-    private int start;
-    private int finish;
+    private long start;
+    private long finish;
     private int maxLen;
     private String hash;
     private List<String> alphabet = new ArrayList<>();
@@ -33,7 +34,8 @@ public class Task implements Runnable
     private final ObjectMapper objectMapper;
     private static final Logger logger = LoggerFactory.getLogger(Task.class);
 
-    private int iterations = 0;
+    private long iterations = 0;
+    private long totalIterations;
 
     public Task(TaskDTO dto)
     {
@@ -43,9 +45,11 @@ public class Task implements Runnable
         this.maxLen = dto.getMaxLen();
         this.hash = dto.getHash();
 
-        for(char i = 'a'; i < 'z'; i++)
+        this.totalIterations = dto.getFinish()-dto.getStart();
+
+        for(char i = 'a'; i <= 'z'; i++)
             alphabet.add(String.valueOf(i));
-        for(char i = '0'; i < '9'; i++)
+        for(char i = '0'; i <= '9'; i++)
             alphabet.add(String.valueOf(i));
 
         this.objectMapper = new ObjectMapper();
@@ -56,7 +60,7 @@ public class Task implements Runnable
     {
         Generator.permutation(alphabet).withRepetitions(maxLen).stream()
                 .skip(start)
-                .limit(finish)
+                .limit(finish-start)
                 .forEach(this::calcHash);
 
         logger.info(String.format("Execution finished. Total iterations = %d. Sending result...", this.iterations));
@@ -89,6 +93,10 @@ public class Task implements Runnable
     private void calcHash(List<String> wordList)
     {
         iterations++;
+
+        double prc = (double) (iterations*100/totalIterations);
+        if (iterations % 1_000_000 == 0)
+            logger.info(String.format("%s iterations done %d / %d (%.2f%%)", ticketID, iterations, totalIterations, prc));
 
         StringBuilder word = new StringBuilder();
         for (String s : wordList)

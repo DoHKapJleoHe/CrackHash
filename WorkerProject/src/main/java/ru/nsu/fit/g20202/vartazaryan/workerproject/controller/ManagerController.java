@@ -34,7 +34,8 @@ public class ManagerController
                 Finish= %d
                 Hash= %s
                 Max length= %d
-                """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getFinish(), taskDTO.getHash(), taskDTO.getMaxLen());
+                Words = %d
+                """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getFinish(), taskDTO.getHash(), taskDTO.getMaxLen(), taskDTO.getFinish()- taskDTO.getStart());
         logger.info(info);
 
         workerService.handleTask(taskDTO);

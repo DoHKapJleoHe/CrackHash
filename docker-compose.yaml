@@ -19,6 +19,11 @@ services:
     networks:
       - network1
 
+  worker3:
+    build: ./WorkerProject/
+    networks:
+      - network1
+
 networks:
   network1:
     driver: bridge

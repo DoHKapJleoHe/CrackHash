@@ -30,7 +30,7 @@ public class TicketStorage implements Storage
         scheduler.scheduleAtFixedRate(() -> ticketStorage.forEach((key, ticket) -> {
             logger.info("Checking tickets");
 
-            if(Duration.between(ticket.getCreationTime(), LocalDateTime.now()).getSeconds() > 120)
+            if(Duration.between(ticket.getCreationTime(), LocalDateTime.now()).getSeconds() > 3600)
             {
                 logger.info(String.format("Ticket %s didn't change its status for more than 2 min. Changing status to error!", key));
                 ticket.setStatus(Status.ERROR);
