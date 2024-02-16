@@ -20,9 +20,12 @@ public class WorkerServiceImpl implements WorkerService
 {
     private static final int SYMBOLS_IN_ALPHABET = 36;
     private static final int THREAD_POOL_SIZE = 10;
+    private static final int WORDS_PER_TASK = 10_000_000;
     @Setter
     @Getter
     private int workersNumber;
+    private Ticket curTicket;
+
     private final TicketStorage ticketStorage;
     private final ExecutorService threadPool;
     private final WorkerSender workerSender;
@@ -40,15 +43,32 @@ public class WorkerServiceImpl implements WorkerService
 
     public void handleTicket(String ticketID)
     {
-        Ticket ticket = ticketStorage.getTicket(ticketID);
+        curTicket = ticketStorage.getTicket(ticketID);
 
-        long wordCount = (int)(SYMBOLS_IN_ALPHABET*(Math.pow(SYMBOLS_IN_ALPHABET, ticket.getMaxLength()) - 1)/(SYMBOLS_IN_ALPHABET - 1));
-
-        long wordsPerWorker = wordCount / workersNumber;
-        long remainingWords = wordCount % workersNumber;
+        long wordCount = (int)(SYMBOLS_IN_ALPHABET*(Math.pow(SYMBOLS_IN_ALPHABET, curTicket.getMaxLength()) - 1)/(SYMBOLS_IN_ALPHABET - 1));
 
         long curStart = 1;
-        for(int i = 1; i <= workersNumber; i++)
+        int curWorker = 0;
+
+        while(wordCount > 0)
+        {
+            curWorker = (curWorker % 3) + 1;
+            if (wordCount < WORDS_PER_TASK)
+            {
+                TaskDTO newTask = makeTask(curStart, wordCount);
+                sendTask(newTask, curWorker);
+                break;
+            }
+            else
+            {
+                TaskDTO newTask = makeTask(curStart, WORDS_PER_TASK);
+                sendTask(newTask, curWorker);
+
+                wordCount -= WORDS_PER_TASK;
+                curStart += WORDS_PER_TASK;
+            }
+        }
+        /*for(int i = 1; i <= workersNumber; i++)
         {
             long curFinish;
             if (i > 1 && i == workersNumber) {
@@ -72,6 +92,25 @@ public class WorkerServiceImpl implements WorkerService
                 workerSender.sendTaskToWorker(newTaskDTO, finalI);
             });
             curStart = curFinish + 1;
-        }
+        }*/
+    }
+
+    private void sendTask(TaskDTO taskDTO, int worker)
+    {
+        threadPool.submit(() -> {
+            logger.info(String.format("Worker %d: start = %d, to_check = %d", worker, taskDTO.getStart(), taskDTO.getCheckAmount()));
+            workerSender.sendTaskToWorker(taskDTO, worker);
+        });
+    }
+
+    private TaskDTO makeTask(long start, long amount)
+    {
+        return TaskDTO.builder()
+                .ticketID(curTicket.getTicketId().toString())
+                .start(start)
+                .checkAmount(amount)
+                .maxLen(curTicket.getMaxLength())
+                .hash(curTicket.getHash())
+                .build();
     }
 }

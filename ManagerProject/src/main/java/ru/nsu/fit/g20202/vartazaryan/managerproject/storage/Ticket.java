@@ -17,6 +17,8 @@ public class Ticket
     private String hash;
     private int maxLength;
 
+    private int tasksNumber;
+
     private LocalDateTime creationTime;
     private List<String> result;
 

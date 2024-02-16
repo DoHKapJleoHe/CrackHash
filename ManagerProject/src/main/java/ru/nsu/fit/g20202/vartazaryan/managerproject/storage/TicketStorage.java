@@ -73,6 +73,7 @@ public class TicketStorage implements Storage
     @Override
     public void updateTicket(String id, List<String> data)
     {
+
         if (data == null)
             return;
 
