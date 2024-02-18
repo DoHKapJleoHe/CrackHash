@@ -13,6 +13,8 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.nsu.fit.g20202.vartazaryan.managerproject.constants.Constants.WORKERS_NUMBER;
+
 @Component
 @Qualifier("fixed")
 public class FixedTicketSplitter extends AbstractTicketSplitter
