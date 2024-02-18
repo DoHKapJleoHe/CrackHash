@@ -31,11 +31,10 @@ public class ManagerController
                 Task info:
                 ID= %s
                 Start= %d
-                Finish= %d
+                Checks num = %d
                 Hash= %s
                 Max length= %d
-                Words = %d
-                """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getFinish(), taskDTO.getHash(), taskDTO.getMaxLen(), taskDTO.getFinish()- taskDTO.getStart());
+                """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getCheckAmount(), taskDTO.getHash(), taskDTO.getMaxLen());
         logger.info(info);
 
         workerService.handleTask(taskDTO);

@@ -1,5 +1,7 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +10,7 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.ResultDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TicketIdDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.WorkerService;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl.ClientServiceImpl;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -16,6 +19,7 @@ public class ClientController
 {
     private final ClientService clientService;
     private final WorkerService workerService;
+    private static final Logger logger = LoggerFactory.getLogger(ClientController.class);
 
     @Autowired
     public ClientController(ClientService clientService, WorkerService workerService)
@@ -27,11 +31,11 @@ public class ClientController
     @PostMapping("/crack")
     public ResponseEntity<TicketIdDTO> crackHash(@RequestBody CrackDTO crackDTO)
     {
-        System.out.println("New crack hash request!");
+        logger.info("New crack hash request!");
 
         var ticketIdDTO = clientService.processRequest(crackDTO);
 
-        System.out.println("Registered new ticket. ID = "+ticketIdDTO.getRequestId());
+        logger.info("Registered new ticket. ID = "+ticketIdDTO.getRequestId());
 
         workerService.handleTicket(ticketIdDTO.getRequestId());
 

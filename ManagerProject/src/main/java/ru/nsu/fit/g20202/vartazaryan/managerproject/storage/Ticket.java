@@ -2,6 +2,8 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ public class Ticket
     private int maxLength;
 
     private int tasksNumber;
+    @Setter
+    @Getter
+    private int tasksDone;
 
     private LocalDateTime creationTime;
     private List<String> result;
