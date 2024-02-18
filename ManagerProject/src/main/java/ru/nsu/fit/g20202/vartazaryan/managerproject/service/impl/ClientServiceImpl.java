@@ -1,5 +1,7 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
@@ -17,6 +19,7 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.TicketStorage;
 public class ClientServiceImpl implements ClientService
 {
     private final TicketStorage ticketStorage;
+    private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(TicketStorage ticketStorage)
@@ -31,7 +34,7 @@ public class ClientServiceImpl implements ClientService
         if (dto.getMaxLength() == 0)
             throw new NoMaxLengthException();
         String taskId = ticketStorage.addNewTicket(dto);
-        System.out.println("New ticket registered!");
+        logger.info("New ticket registered!");
 
         return new TicketIdDTO(taskId);
     }

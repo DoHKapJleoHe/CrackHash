@@ -43,7 +43,7 @@ public class WorkerServiceTests
         workerServiceImpl.setWorkersNumber(1);
 
         UUID id = UUID.randomUUID();
-        Ticket ticket = new Ticket(id, "hash", 3);
+        Ticket ticket = new Ticket(id, "abc", 3);
         when(ticketStorage.getTicket(anyString())).thenReturn(ticket);
 
         workerServiceImpl.handleTicket(id.toString());

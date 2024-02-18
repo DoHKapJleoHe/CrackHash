@@ -78,14 +78,18 @@ public class TicketStorage implements Storage
 
         Ticket blankTicket = new Ticket(UUID.randomUUID(), "blank", 1);
         ticketStorage.merge(id, blankTicket, ((ticket, ticket1) -> {
+            ticket.setTasksDone(ticket.getTasksDone()+1);
+            logger.info(String.format("Ticket %s: tasks done %d/%d", ticket.getTicketId().toString(), ticket.getTasksDone(), ticket.getTasksNumber()));
             if (!data.isEmpty() && ticket.getStatus() != Status.ERROR)
             {
-                ticket.setStatus(Status.DONE);
                 ticket.setResult(data);
-
-                logger.info(String.format("Ticket %s was successfully updated!", ticket.getTicketId()));
+                logger.info(String.format("Ticket %s was successfully updated!", ticket.getTicketId().toString()));
             }
-
+            if(ticket.getTasksNumber() == ticket.getTasksDone())
+            {
+                ticket.setStatus(Status.DONE);
+                logger.info(String.format("Ticket %s was successfully done!", ticket.getTicketId().toString()));
+            }
             return ticket;
         }));
     }

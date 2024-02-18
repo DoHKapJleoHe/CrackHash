@@ -7,7 +7,7 @@ public class TaskDTO
 {
     private String ticketID;
     private long start;
-    private long finish;
+    private long checkAmount;
     private int maxLen;
     private String hash;
 }
