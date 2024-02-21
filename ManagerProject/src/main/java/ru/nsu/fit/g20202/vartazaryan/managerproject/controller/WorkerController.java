@@ -1,5 +1,8 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +16,7 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 public class WorkerController
 {
     private final ClientService clientService;
+    private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 
     @Autowired
     public WorkerController(ClientService clientService) {
@@ -22,8 +26,8 @@ public class WorkerController
     @PatchMapping
     public void updateTicket(@RequestBody UpdateDTO dto)
     {
-        System.out.println("Updating ticket. Ticket id: "+dto.getTicketID());
-        System.out.println("Received data: "+dto.getResult());
+        logger.info("Updating ticket. Ticket id: "+dto.getTicketID()+" data: "+dto.getResult());
+
         clientService.updateTicket(dto);
     }
 }

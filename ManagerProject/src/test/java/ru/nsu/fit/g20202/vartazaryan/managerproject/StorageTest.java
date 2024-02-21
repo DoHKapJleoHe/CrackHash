@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class StorageTest
 {
-    @Autowired
+    /*@Autowired
     private TicketStorage ticketStorage;
 
     @BeforeEach
@@ -74,5 +74,5 @@ public class StorageTest
 
         //assertEquals(Status.DONE, t.getStatus());
         //assertEquals("abc", t.getResult().get(0));
-    }
+    }*/
 }

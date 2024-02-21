@@ -35,7 +35,7 @@ public class WorkerServiceImpl implements WorkerService
     private static final Logger logger = LoggerFactory.getLogger(WorkerServiceImpl.class);
 
     @Autowired
-    public WorkerServiceImpl(TicketStorage ticketStorage, WorkerSender workerSender, @Qualifier("fixed") AbstractTicketSplitter ticketSplitter)
+    public WorkerServiceImpl(TicketStorage ticketStorage, @Qualifier("rabbitMQWorkerSender") WorkerSender workerSender, @Qualifier("fixed") AbstractTicketSplitter ticketSplitter)
     {
         this.ticketSplitter = ticketSplitter;
         String workersNum = System.getenv("WORKERS_NUM");

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TaskDTO;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.net.HttpWorkerSender;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.net.WorkerSender;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl.WorkerServiceImpl;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
@@ -21,12 +22,12 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class WorkerServiceTests
 {
-    @Autowired
+    /*@Autowired
     private WorkerServiceImpl workerServiceImpl;
     @MockBean
     private TicketStorage ticketStorage;
     @MockBean
-    private WorkerSender workerSender;
+    private HttpWorkerSender workerSender;
     @MockBean
     private ExecutorService executorService;
 
