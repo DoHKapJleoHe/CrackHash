@@ -35,7 +35,7 @@ public class WorkerServiceImpl implements WorkerService
     private static final Logger logger = LoggerFactory.getLogger(WorkerServiceImpl.class);
 
     @Autowired
-    public WorkerServiceImpl(TicketStorage ticketStorage, @Qualifier("rabbitMQWorkerSender") WorkerSender workerSender, @Qualifier("fixed") AbstractTicketSplitter ticketSplitter)
+    public WorkerServiceImpl(TicketStorage ticketStorage, @Qualifier("rabbitMQWorkerSender") WorkerSender workerSender, @Qualifier("equal") AbstractTicketSplitter ticketSplitter)
     {
         this.ticketSplitter = ticketSplitter;
         String workersNum = System.getenv("WORKERS_NUM");
@@ -54,7 +54,6 @@ public class WorkerServiceImpl implements WorkerService
     private void sendTask(WorkerTaskPair dto)
     {
         threadPool.submit(() -> {
-            logger.info(String.format("Worker %d: start = %d, to_check = %d", dto.getWorker(), dto.getTask().getStart(), dto.getTask().getCheckAmount()));
             workerSender.sendTaskToWorker(dto.getTask(), dto.getWorker());
         });
     }

@@ -26,6 +26,7 @@ public class RabbitMQWorkerSender implements WorkerSender
         rabbitTemplate.convertAndSend("exchange","worker_routing_key", task);
 
         logger.info("Task was sent!");
+
         return 0;
     }
 }

@@ -17,13 +17,11 @@ public class ManagerController
 {
     private final WorkerService workerService;
     private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
-    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public ManagerController(WorkerService workerService, RabbitTemplate rabbitTemplate)
+    public ManagerController(WorkerService workerService)
     {
         this.workerService = workerService;
-        this.rabbitTemplate = rabbitTemplate;
     }
 
     @PostMapping

@@ -37,10 +37,13 @@ public class EqualPartsTicketSplitter extends AbstractTicketSplitter
                 curFinish = curStart + wordsPerWorker - 1;
             }
 
-            logger.info(String.format("Worker %d: start = %d, finish = %d", i, curStart, curFinish));
+            logger.info(String.format("Worker %d: start = %d, to_check = %d", i, curStart, curFinish-curStart));
 
             TaskDTO dto = makeTask(curStart, curFinish-curStart);
             tasks.add(new WorkerTaskPair(i, dto));
+
+            ticket.setTasksNumber(ticket.getTasksNumber()+1);
+            curStart = curFinish + 1;
         }
 
         return tasks;
