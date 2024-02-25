@@ -69,7 +69,6 @@ public class TicketStorage implements Storage
         ticketStorage.clear();
     }
 
-    //TODO: отслеживать сколкьо воркеров вернуло ответ, чтобы всегда IN_PROGRESS не было
     @Override
     public void updateTicket(String id, List<String> data)
     {

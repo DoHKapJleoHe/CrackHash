@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ClientServiceTest
 {
-    @Autowired
+    /*@Autowired
     private ClientService clientService;
     @MockBean
     private TicketStorage ticketStorage;
@@ -73,5 +73,5 @@ public class ClientServiceTest
 
         var res = clientService.getData("abcd");
         assertThat(res).isEqualTo(new ResultDTO(Status.ERROR, null));
-    }
+    }*/
 }

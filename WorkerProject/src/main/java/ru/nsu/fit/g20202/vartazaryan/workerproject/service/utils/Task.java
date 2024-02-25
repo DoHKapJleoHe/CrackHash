@@ -1,25 +1,18 @@
 package ru.nsu.fit.g20202.vartazaryan.workerproject.service.utils;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paukov.combinatorics3.Generator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.fit.g20202.vartazaryan.workerproject.dto.ResponseDTO;
 import ru.nsu.fit.g20202.vartazaryan.workerproject.dto.TaskDTO;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Task implements Runnable
+public class Task
 {
     private final String ticketID;
     private final long start;
@@ -29,7 +22,6 @@ public class Task implements Runnable
     private List<String> alphabet = new ArrayList<>();
 
     private List<String> res = new ArrayList<>();
-    private final ObjectMapper objectMapper;
     private static final Logger logger = LoggerFactory.getLogger(Task.class);
 
     private long iterations = 0;
@@ -46,12 +38,9 @@ public class Task implements Runnable
             alphabet.add(String.valueOf(i));
         for(char i = '0'; i <= '9'; i++)
             alphabet.add(String.valueOf(i));
-
-        this.objectMapper = new ObjectMapper();
     }
 
-    @Override
-    public void run()
+    public List<String> run()
     {
         Generator.permutation(alphabet).withRepetitions(maxLen).stream()
                 .skip(start)
@@ -60,29 +49,7 @@ public class Task implements Runnable
 
         logger.info(String.format("Execution finished. Total iterations = %d. Sending result...", this.iterations));
 
-        String managerHost = "http://manager:8080/internal/api/manager/hash/crack/request";
-        URI uri = URI.create(managerHost);
-        ResponseDTO dto = ResponseDTO.builder()
-                .result(this.res)
-                .ticketID(this.ticketID)
-                .build();
-
-        HttpClient managerClient = HttpClient.newHttpClient();
-        try {
-            HttpRequest taskResponse = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .header("Content-Type", "application/json")
-                    .method("PATCH", HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(dto)))
-                    .build();
-
-            HttpResponse<String> response = managerClient.send(taskResponse, HttpResponse.BodyHandlers.ofString());
-            logger.info("Result was sent!");
-
-            if (response.statusCode() != 200)
-                logger.error(String.format("Something went wrong on manager side. Status code: %d", response.statusCode()));
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        return res;
     }
 
     private void calcHash(List<String> wordList)
