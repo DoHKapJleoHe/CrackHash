@@ -10,6 +10,7 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.ResultDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.UpdateDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoHashException;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoMaxLengthException;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.mongo.TicketRepository;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Status;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
@@ -19,12 +20,14 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.TicketStorage;
 public class ClientServiceImpl implements ClientService
 {
     private final TicketStorage ticketStorage;
+    private final TicketRepository ticketRepository;
     private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
-    public ClientServiceImpl(TicketStorage ticketStorage)
+    public ClientServiceImpl(TicketStorage ticketStorage, TicketRepository ticketRepository)
     {
         this.ticketStorage = ticketStorage;
+        this.ticketRepository = ticketRepository;
     }
 
     public TicketIdDTO processRequest(CrackDTO dto)
@@ -33,10 +36,13 @@ public class ClientServiceImpl implements ClientService
             throw new NoHashException();
         if (dto.getMaxLength() == 0)
             throw new NoMaxLengthException();
-        String taskId = ticketStorage.addNewTicket(dto);
+
+        var task = ticketStorage.addNewTicket(dto);
         logger.info("New ticket registered!");
 
-        return new TicketIdDTO(taskId);
+        ticketRepository.save(task);
+
+        return new TicketIdDTO(task.getTicketId().toString());
     }
 
     public ResultDTO getData(String id)

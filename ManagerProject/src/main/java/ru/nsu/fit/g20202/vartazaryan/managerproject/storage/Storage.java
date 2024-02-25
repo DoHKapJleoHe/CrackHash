@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface Storage
 {
-    String addNewTicket(CrackDTO dto);
+    Ticket addNewTicket(CrackDTO dto);
     Ticket getTicket(String id);
     void deleteTicket(String id);
     void deleteAllTickets();

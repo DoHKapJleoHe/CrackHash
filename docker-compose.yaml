@@ -16,9 +16,18 @@ services:
     networks:
       - network1
 
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+    restart: always
+    ports:
+      - "27017:27017"
+
   manager:
     environment:
-      - WORKERS_NUM=1
+      - WORKERS_NUM=2
       - RABBITMQ_HOST=rabbitmq
     depends_on:
       rabbitmq:
@@ -30,6 +39,16 @@ services:
       - network1
 
   worker1:
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    build: ./WorkerProject/
+    networks:
+      - network1
+
+  worker2:
     environment:
       - RABBITMQ_HOST=rabbitmq
     depends_on:

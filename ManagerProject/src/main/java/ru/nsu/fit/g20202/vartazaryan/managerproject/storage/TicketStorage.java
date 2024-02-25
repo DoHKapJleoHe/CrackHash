@@ -39,16 +39,15 @@ public class TicketStorage implements Storage
     }
 
     @Override
-    public String addNewTicket(CrackDTO dto)
+    public Ticket addNewTicket(CrackDTO dto)
     {
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
-
         Ticket t = new Ticket(uuid, dto.getHash(), dto.getMaxLength());
 
         ticketStorage.put(id, t);
 
-        return id;
+        return t;
     }
 
     @Override
