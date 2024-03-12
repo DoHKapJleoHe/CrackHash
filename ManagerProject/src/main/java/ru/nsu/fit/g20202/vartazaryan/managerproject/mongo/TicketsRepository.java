@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
 
 @Repository
-public interface TicketRepository extends MongoRepository<Ticket, String>
+public interface TicketsRepository extends MongoRepository<Ticket, String>
 {
-
 }

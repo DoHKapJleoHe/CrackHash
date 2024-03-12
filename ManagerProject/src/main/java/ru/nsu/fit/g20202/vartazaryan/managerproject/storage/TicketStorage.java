@@ -14,6 +14,7 @@ import java.util.concurrent.*;
 @Component
 public class TicketStorage implements Storage
 {
+    //TODO add sync for all operations with storage
     private ConcurrentHashMap<String, Ticket> ticketStorage;
     private final ScheduledExecutorService scheduler;
     private static final Logger logger = LoggerFactory.getLogger(TicketStorage.class);
