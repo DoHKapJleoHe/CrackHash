@@ -38,6 +38,6 @@ public class ManagerController
                 """, taskDTO.getTicketID(), taskDTO.getStart(), taskDTO.getCheckAmount(), taskDTO.getHash(), taskDTO.getMaxLen());
         logger.info(info);
 
-        workerService.handleTask(taskDTO);
+        workerService.handleTask(taskDTO, null, 0);
     }
 }

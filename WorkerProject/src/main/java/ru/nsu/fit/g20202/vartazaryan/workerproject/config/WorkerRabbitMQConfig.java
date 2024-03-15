@@ -1,6 +1,8 @@
 package ru.nsu.fit.g20202.vartazaryan.workerproject.config;
 
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,6 +20,15 @@ public class WorkerRabbitMQConfig
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory myRabbitListenerContainerFactory() {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setMaxConcurrentConsumers(5);
+        factory.setMessageConverter(jsonMessageConverter());
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        return factory;
     }
 
     @Bean

@@ -1,12 +1,11 @@
 package ru.nsu.fit.g20202.vartazaryan.workerproject.net;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.g20202.vartazaryan.workerproject.dto.ResponseDTO;
-import ru.nsu.fit.g20202.vartazaryan.workerproject.service.utils.Task;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,7 +26,7 @@ public class HttpManagerSender implements ManagerSender
     }
 
     @Override
-    public void send(List<String> result, String ticketID)
+    public void send(List<String> result, String ticketID, Channel channel, long tag)
     {
         String managerHost = "http://manager:8080/internal/api/manager/hash/crack/request";
         URI uri = URI.create(managerHost);
