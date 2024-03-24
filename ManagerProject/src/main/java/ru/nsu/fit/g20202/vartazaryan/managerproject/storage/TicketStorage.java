@@ -29,13 +29,14 @@ public class TicketStorage implements Storage
 
     private void startPeriodicCheck() {
         scheduler.scheduleAtFixedRate(() -> ticketStorage.forEach((key, ticket) -> {
-            logger.info("Checking tickets");
+            logger.info("Checking tickets...");
 
             if(Duration.between(ticket.getCreationTime(), LocalDateTime.now()).getSeconds() > 3600) {
                 logger.info(String.format("Ticket %s didn't change its status for more than 2 min. Changing status to error!", key));
                 ticket.setStatus(Status.ERROR);
             }
         }), 0, 1, TimeUnit.MINUTES);
+        logger.info("Finished checking!");
     }
 
     @Override
@@ -48,7 +49,7 @@ public class TicketStorage implements Storage
 
             ticketStorage.put(id, t);
         }
-
+ 
         return t;
     }
 

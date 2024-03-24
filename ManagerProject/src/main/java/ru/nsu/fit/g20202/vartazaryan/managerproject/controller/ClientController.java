@@ -3,6 +3,7 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
@@ -10,7 +11,6 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.ResultDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TicketIdDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.WorkerService;
-import ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl.ClientServiceImpl;
 
 @RestController
 @CrossOrigin(origins = "*")

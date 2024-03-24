@@ -1,6 +1,5 @@
 package ru.nsu.fit.g20202.vartazaryan.managerproject.storage;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Data
 @Document("tickets")
+@Data
 public class Ticket
 {
     private UUID ticketId;

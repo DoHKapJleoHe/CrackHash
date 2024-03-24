@@ -3,6 +3,7 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.TicketIdDTO;
@@ -19,34 +20,34 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.TicketStorage;
 public class ClientServiceImpl implements ClientService
 {
     private final TicketStorage ticketStorage;
+    private final MongoTemplate mongoTemplate;
     private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
-    public ClientServiceImpl(TicketStorage ticketStorage)
-    {
+    public ClientServiceImpl(TicketStorage ticketStorage, MongoTemplate mongoTemplate) {
         this.ticketStorage = ticketStorage;
+        this.mongoTemplate = mongoTemplate;
     }
 
-    public TicketIdDTO processRequest(CrackDTO dto)
-    {
-        if (dto.getHash() == null)
+    public TicketIdDTO processRequest(CrackDTO dto) {
+        if (dto.getHash() == null) {
             throw new NoHashException();
-        if (dto.getMaxLength() == 0)
+        }
+        if (dto.getMaxLength() == 0) {
             throw new NoMaxLengthException();
+        }
 
         var task = ticketStorage.addNewTicket(dto);
         logger.info("New ticket registered!");
 
-        //ticketRepository.save(task);
+        mongoTemplate.save(task);
 
         return new TicketIdDTO(task.getTicketId().toString());
     }
 
-    public ResultDTO getData(String id)
-    {
+    public ResultDTO getData(String id) {
         Ticket ticket = ticketStorage.getTicket(id);
-        switch (ticket.getStatus())
-        {
+        switch (ticket.getStatus()) {
             case DONE -> {
                 var res = ticket.getResult();
                 ticketStorage.deleteTicket(id);
@@ -65,8 +66,7 @@ public class ClientServiceImpl implements ClientService
     }
 
     @Override
-    public void updateTicket(UpdateDTO dto)
-    {
+    public void updateTicket(UpdateDTO dto) {
         ticketStorage.updateTicket(dto.getTicketID(), dto.getResult());
     }
 }
