@@ -3,6 +3,7 @@ package ru.nsu.fit.g20202.vartazaryan.managerproject.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.dto.CrackDTO;
@@ -13,20 +14,19 @@ import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoHashException;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.exceptions.NoMaxLengthException;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.service.ClientService;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Status;
+import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Storage;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.Ticket;
 import ru.nsu.fit.g20202.vartazaryan.managerproject.storage.TicketStorage;
 
 @Service
 public class ClientServiceImpl implements ClientService
 {
-    private final TicketStorage ticketStorage;
-    private final MongoTemplate mongoTemplate;
+    private final Storage storage;
     private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
-    public ClientServiceImpl(TicketStorage ticketStorage, MongoTemplate mongoTemplate) {
-        this.ticketStorage = ticketStorage;
-        this.mongoTemplate = mongoTemplate;
+    public ClientServiceImpl(@Qualifier("mongoStorage") Storage storage) {
+        this.storage = storage;
     }
 
     public TicketIdDTO processRequest(CrackDTO dto) {
@@ -37,20 +37,18 @@ public class ClientServiceImpl implements ClientService
             throw new NoMaxLengthException();
         }
 
-        var task = ticketStorage.addNewTicket(dto);
+        var task = storage.addNewTicket(dto);
         logger.info("New ticket registered!");
-
-        mongoTemplate.save(task);
 
         return new TicketIdDTO(task.getTicketId().toString());
     }
 
     public ResultDTO getData(String id) {
-        Ticket ticket = ticketStorage.getTicket(id);
+        Ticket ticket = storage.getTicket(id);
         switch (ticket.getStatus()) {
             case DONE -> {
                 var res = ticket.getResult();
-                ticketStorage.deleteTicket(id);
+                storage.deleteTicket(id);
 
                 return new ResultDTO(Status.DONE, res);
             }
@@ -67,6 +65,6 @@ public class ClientServiceImpl implements ClientService
 
     @Override
     public void updateTicket(UpdateDTO dto) {
-        ticketStorage.updateTicket(dto.getTicketID(), dto.getResult());
+        storage.updateTicket(dto.getTicketID(), dto.getResult());
     }
 }
